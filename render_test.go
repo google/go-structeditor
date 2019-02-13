@@ -16,6 +16,10 @@ func inputString(value string, index int) string {
 
 }
 
+func primitiveEditString(value string, path string, index int) string {
+	return fmt.Sprintf("<input type='text' id='input-%d' value='%s'><button onclick=\"update('%s', 'input-%d')\">change</button>", index, value, path, index)
+}
+
 func TestRenderElement(t *testing.T) {
 	addressableValue := 5
 
@@ -45,13 +49,13 @@ func TestRenderElement(t *testing.T) {
 				",</li><li>" +
 				inputString("3", 2) +
 				",</li>}</ul></div>"},
-		{&addressableValue, "&" + inputString("5", 0)},
+		{&addressableValue, "&" + primitiveEditString("5", "", 0)},
 	}
 
 	for _, step := range data {
 
-		e := NewEditor(step.input)
-		result, err := e.Render()
+		e := &editor{state: step.input}
+		result, err := e.unwrappedRender()
 
 		if err != nil {
 			t.Error("Rendering error:", err)
@@ -70,8 +74,8 @@ func TestRenderStruct(t *testing.T) {
 		myBool:   true,
 	}
 
-	e := NewEditor(testCase)
-	result, err := e.Render()
+	e := editor{state: testCase}
+	result, err := e.unwrappedRender()
 
 	if err != nil {
 		t.Error("Rendering error:", err)

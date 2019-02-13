@@ -24,13 +24,14 @@ func View(e structeditor.Editor) func(http.ResponseWriter, *http.Request) {
 		if err != nil {
 			http.Error(w, err.Error(), 500)
 		} else {
+			w.Header().Set("Content-Type", "text/html")
 			fmt.Fprintf(w, "%s", result)
 		}
 	}
 }
 
 func main() {
-	demoData := example{
+	demoData := &example{
 		Company:       "ExampleCo",
 		Id:            123,
 		BillingActive: true,
@@ -45,7 +46,7 @@ func main() {
 		},
 	}
 
-	editor := structeditor.NewEditor(demoData)
+	editor := structeditor.NewEditor(demoData, "/mutate")
 	http.HandleFunc("/", View(editor))
 
 	log.Fatal(http.ListenAndServe(":8000", nil))

@@ -6,11 +6,13 @@ type Editor interface {
 }
 
 type editor struct {
-	state interface{}
+	state     interface{}
+	mutateUrl string
 }
 
-func NewEditor(state interface{}) Editor {
+func NewEditor(state interface{}, mutateUrl string) Editor {
 	return &editor{
-		state: state,
+		state:     state,
+		mutateUrl: mutateUrl,
 	}
 }

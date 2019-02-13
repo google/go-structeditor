@@ -1,6 +1,7 @@
 package structeditor
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -76,7 +77,7 @@ func TestStringToPath(t *testing.T) {
 	}
 }
 
-func TestPathToString(t *testing.T) {
+func TestPathString(t *testing.T) {
 	data := []struct {
 		input    *Path
 		expected string
@@ -108,9 +109,50 @@ func TestPathToString(t *testing.T) {
 	}
 
 	for _, step := range data {
-		result := step.input.ToString()
+		result := step.input.String()
 		if result != step.expected {
 			t.Error("Expected", step.expected, "saw", result)
 		}
 	}
+}
+
+func TestVisiting(t *testing.T) {
+	p := &Path{
+		Name: "customers",
+	}
+	newEl := &Path{
+		Index: 1,
+	}
+	assert := func(test bool, msg string) {
+		if !test {
+			t.Error(msg)
+		}
+	}
+	p.Visiting(newEl, func(updated *Path) {
+		assert(updated.Next != nil, "No second element while visiting.")
+		assert(updated.Name == "customers", "Name should be 'customers', was "+updated.Name)
+		assert(updated.Next.Index == 1, fmt.Sprintf("Second element Index should have been 1, was %d", updated.Next.Index))
+		assert(updated.Next.Next == nil, "Should only have been two elements; there are more.")
+	})
+
+	assert(p.Name == "customers", "After visit, name should be customers but was "+p.Name)
+	assert(p.Next == nil, "After visit, p.Next should be nil but was not.")
+}
+
+func TestVisitingNilRoot(t *testing.T) {
+	var p *Path
+	newEl := &Path{
+		Name: "customers",
+	}
+	assert := func(test bool, msg string) {
+		if !test {
+			t.Error(msg)
+		}
+	}
+	p.Visiting(newEl, func(updated *Path) {
+		assert(updated.Next == nil, "Should be only one element, saw more than ome.")
+		assert(updated.Name == "customers", "Name should be 'customers', was "+updated.Name)
+	})
+
+	assert(p == nil, "After visit, p should be nil but was not.")
 }
