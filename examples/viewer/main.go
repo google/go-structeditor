@@ -30,6 +30,25 @@ func View(e structeditor.Editor) func(http.ResponseWriter, *http.Request) {
 	}
 }
 
+func Mutate(e structeditor.Editor) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		values := r.URL.Query()
+		path := values.Get("path")
+		operator, err := e.OperatorFor(values)
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+		err = e.Mutate(path, operator)
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+		http.Error(w, "", 200)
+
+	}
+}
+
 func main() {
 	demoData := &example{
 		Company:       "ExampleCo",
@@ -48,6 +67,7 @@ func main() {
 
 	editor := structeditor.NewEditor(demoData, "/mutate")
 	http.HandleFunc("/", View(editor))
+	http.HandleFunc("/mutate", Mutate(editor))
 
 	log.Fatal(http.ListenAndServe(":8000", nil))
 }

@@ -3,6 +3,7 @@ package structeditor
 import (
 	"errors"
 	"fmt"
+	"net/url"
 	"reflect"
 	"strconv"
 )
@@ -112,4 +113,13 @@ func (o *operatorSet) Do(v reflect.Value) error {
 		return fmt.Errorf("Unable to set value on type %v", v.Kind())
 	}
 	return nil
+}
+
+func (e *editor) OperatorFor(values url.Values) (Operator, error) {
+	operatorName := values.Get("operator")
+	switch operatorName {
+	case "set":
+		return OperatorSet(values.Get("value")), nil
+	}
+	return nil, errors.New("Unable to build Operator named '" + operatorName + "'")
 }
