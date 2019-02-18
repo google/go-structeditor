@@ -99,6 +99,12 @@ func (o *operatorSet) Do(v reflect.Value) error {
 		}
 		v.SetUint(newValue)
 		return nil
+	case reflect.Float32, reflect.Float64:
+		newValue, err := strconv.ParseFloat(o.newValue, 64)
+		if err != nil {
+			return err
+		}
+		v.SetFloat(newValue)
 	case reflect.String:
 		v.SetString(o.newValue)
 		return nil
