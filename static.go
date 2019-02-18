@@ -13,17 +13,16 @@ const STATIC_HEADER = `
     <script language="javascript">
       function update(path, fieldName) {
         let newValue = document.getElementById(fieldName).value;
-        let data = new FormData();
-        data.append("path", path);
-        data.append("value", newValue);
+        let urlParams = "?path=" + encodeURIComponent(path) +
+          "&value=" + encodeURIComponent(newValue);
 
         let req = new XMLHttpRequest();
         req.addEventListener("load", function() {
           location.reload();
         });
         // todo: listeners for errors
-        req.open("post", "${MUTATE_URL}");
-        req.send(data);
+        req.open("post", "${MUTATE_URL}" + urlParams);
+        req.send("");
       }
     </script>
   </head>
