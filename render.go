@@ -84,7 +84,7 @@ func (r *renderer) renderComposite(elt reflect.Value, curPath *Path) (string, er
 	case reflect.Ptr:
 		return r.renderPtr(elt, curPath)
 	default:
-		return "", fmt.Errorf("Unknown composite render type: %v", elt.Kind())
+		return "", fmt.Errorf("At [%v]: Unknown composite render type: %v", curPath, elt.Kind())
 	}
 }
 
