@@ -19,7 +19,9 @@ type example struct {
 }
 
 func main() {
-	demoData := example{
+	// Note difference from examples/viewer/main.go: demoData is a pointer
+	// to the structure, so the structure will be editable.
+	demoData := &example{
 		Company:       "ExampleCo",
 		Id:            123,
 		BillingActive: true,
