@@ -50,3 +50,7 @@ Use of this library exposes internal state of your server directly to an
 insecure HTTP endpoint. If you do not control access to the server, you should
 wrap access to the editor's ViewHandler and MutateHandler in an authentication /
 authorization solution.
+
+## Disclaimer
+
+This is not an officially supported Google product.
