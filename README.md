@@ -40,8 +40,7 @@ on the server.
     * The UI is not reloaded upon change
     * Boolean data types are exposed as string fields, not dropdowns or checkboxes
     * Newline and comma misplacement
-* Structure cannot be modified (slices cannot have elements added / removed;
-  pointers cannot be cleared)
+* Pointers cannot be cleared
 * Extremely large structs can bog down the UI
 
 ## Security Notice
