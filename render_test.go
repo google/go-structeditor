@@ -30,6 +30,10 @@ func inputString(value string, index int) string {
 
 }
 
+func sliceEditButtons(path string) string {
+	return fmt.Sprintf("<button onclick=\"grow('%s')\">+</button><button onclick=\"shrink('%s')\">-</button>", path, path)
+}
+
 func primitiveEditString(value string, path string, index int) string {
 	return fmt.Sprintf("<input type='text' id='input-%d' value='%s'><button onclick=\"update('%s', 'input-%d')\">change</button>", index, value, path, index)
 }
@@ -63,6 +67,15 @@ func TestRenderElement(t *testing.T) {
 				",</li><li>" +
 				inputString("3", 2) +
 				",</li>}</ul></div>"},
+		{&[]int{1, 2, 3},
+			"&<div>[]int {<ul><li>" +
+				primitiveEditString("1", "0", 0) +
+				",</li><li>" +
+				primitiveEditString("2", "1", 1) +
+				",</li><li>" +
+				primitiveEditString("3", "2", 2) +
+				",</li>}" + sliceEditButtons("") + "</ul></div>"},
+
 		{&addressableValue, "&" + primitiveEditString("5", "", 0)},
 	}
 

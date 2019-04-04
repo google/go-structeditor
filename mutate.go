@@ -82,6 +82,7 @@ func (e *editor) findValueToChange(p *Path, v reflect.Value, modifiesPtr bool) (
 
 /// Operators
 
+// Set a value to a new value (indicated by a string)
 type operatorSet struct {
 	newValue string
 }
@@ -135,11 +136,74 @@ func (o *operatorSet) Do(v reflect.Value) error {
 	return nil
 }
 
+// Grow a slice by one element (the element takes on the zero value for th slice)
+type operatorGrow struct {
+}
+
+func OperatorGrow() Operator {
+	return &operatorGrow{}
+}
+
+func (o *operatorGrow) ModifiesPointer() bool {
+	return false
+}
+
+func (o *operatorGrow) Do(v reflect.Value) error {
+	switch v.Kind() {
+	case reflect.Slice:
+		if v.Len() >= v.Cap() {
+			v.Set(doubleCapacity(v))
+		}
+		v.SetLen(v.Len() + 1)
+	default:
+		return fmt.Errorf("Unable to grow type %v", v.Kind())
+	}
+	return nil
+}
+
+// Shrink a slice by one element. Does nothing if the slice's size is already
+// zero.
+type operatorShrink struct{}
+
+func OperatorShrink() Operator {
+	return &operatorShrink{}
+}
+
+func (o *operatorShrink) ModifiesPointer() bool {
+	return false
+}
+
+func (o *operatorShrink) Do(v reflect.Value) error {
+	switch v.Kind() {
+	case reflect.Slice:
+		if v.Len() > 0 {
+			v.SetLen(v.Len() - 1)
+		}
+	default:
+		return fmt.Errorf("Unable to shrink type %v", v.Kind())
+	}
+	return nil
+}
+
+// doubleCapacity takes a slice (as a Value) and returns a copy of the slice
+// with the capacity doubled
+func doubleCapacity(sliceValue reflect.Value) reflect.Value {
+	newSlice := reflect.MakeSlice(sliceValue.Type(), sliceValue.Len(), 2*sliceValue.Cap())
+	reflect.Copy(newSlice, sliceValue)
+	return newSlice
+}
+
+/// end operators
+
 func (e *editor) OperatorFor(values url.Values) (Operator, error) {
 	operatorName := values.Get("operator")
 	switch operatorName {
 	case "set":
 		return OperatorSet(values.Get("value")), nil
+	case "grow":
+		return OperatorGrow(), nil
+	case "shrink":
+		return OperatorShrink(), nil
 	}
 	return nil, errors.New("Unable to build Operator named '" + operatorName + "'")
 }

@@ -170,7 +170,14 @@ func (r *renderer) renderSlice(v reflect.Value, curPath *Path) (string, error) {
 		}
 		result += fmt.Sprintf("<li>%s,</li>", subtext)
 	}
-	result += "}</ul></div>"
+	result += "}"
+	if r.editable {
+		result += fmt.Sprintf("<button onclick=\"grow('%s')\">+</button>",
+			curPath.String())
+		result += fmt.Sprintf("<button onclick=\"shrink('%s')\">-</button>",
+			curPath.String())
+	}
+	result += "</ul></div>"
 	return result, nil
 }
 

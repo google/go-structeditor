@@ -144,3 +144,62 @@ func TestModifyValue(t *testing.T) {
 		t.Error("Expected", target, "saw", data)
 	}
 }
+
+type growable struct {
+	Foo int
+	Bar []int
+}
+
+func TestOperatorGrow(t *testing.T) {
+	data := growable{
+		Foo: 1,
+		Bar: []int{
+			2, 3, 4,
+		},
+	}
+
+	target := growable{
+		Foo: 1,
+		Bar: []int{
+			2, 3, 4, 0,
+		},
+	}
+
+	e := NewEditor(&data, "")
+	err := e.Mutate("Bar", OperatorGrow())
+
+	if err != nil {
+		t.Error("Could not mutate Bar -", err)
+	}
+
+	if !reflect.DeepEqual(data, target) {
+		t.Error("Expected", target, "saw", data)
+	}
+}
+
+func TestOperatorShrink(t *testing.T) {
+	data := growable{
+		Foo: 1,
+		Bar: []int{
+			2, 3, 4,
+		},
+	}
+
+	target := growable{
+		Foo: 1,
+		Bar: []int{
+			2, 3,
+		},
+	}
+
+	e := NewEditor(&data, "")
+	err := e.Mutate("Bar", OperatorShrink())
+
+	if err != nil {
+		t.Error("Could not mutate Bar -", err)
+	}
+
+	if !reflect.DeepEqual(data, target) {
+		t.Error("Expected", target, "saw", data)
+	}
+}

@@ -24,11 +24,12 @@ const STATIC_HEADER = `
   <head>
     <title>Struct Editor</title>
     <script language="javascript">
-      function update(path, fieldName) {
-        let newValue = document.getElementById(fieldName).value;
-        let urlParams = "?operator=set&path=" + encodeURIComponent(path) +
-          "&value=" + encodeURIComponent(newValue);
-
+      function sendCommand(operator, path, extraArgs) {
+        let urlParams = "?operator=" + operator +
+            "&path=" + encodeURIComponent(path);
+        if (extraArgs) {
+          urlParams += extraArgs;
+        }
         let req = new XMLHttpRequest();
         req.addEventListener("load", function() {
           // location.reload();
@@ -36,6 +37,19 @@ const STATIC_HEADER = `
         // todo: listeners for errors
         req.open("post", "${MUTATE_URL}" + urlParams);
         req.send("");
+      }
+
+      function update(path, fieldName) {
+        let newValue = document.getElementById(fieldName).value;
+        sendCommand("set", path, "&value=" + encodeURIComponent(newValue));
+      }
+
+      function grow(path) {
+        sendCommand("grow", path);
+      }
+
+      function shrink(path) {
+        sendCommand("shrink", path);
       }
     </script>
   </head>
