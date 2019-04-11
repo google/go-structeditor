@@ -18,7 +18,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/google/structeditor"
+	"github.com/google/go-structeditor/structeditor"
 )
 
 type customer struct {

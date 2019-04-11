@@ -12,7 +12,7 @@ circumstance where global data is represented as a struct.
 
 ## Usage
 
-An example of configuring the editor is provided in the `viewer` example in
+An example of configuring the editor is provided in the `editor` example in
 the `examples` subdirectory.
 
 ```go
